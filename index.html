@@ -1,27 +1,68 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>3D Model Viewer</title>
-  <style>
-    body { margin: 0; }
-    canvas { display: block; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Model on Click</title>
+    <style>
+        #model-container {
+            width: 100%;
+            height: 500px;
+            background-color: #f0f0f0;
+            display: none;
+        }
+    </style>
 </head>
 <body>
-  <script src="https://threejs.org/build/three.min.js"></script>
-  <script>
-    // ... (Scene, Camera, Renderer, Lighting as before) ...
+    <a href="#" id="loadModelBtn">Click to View 3D Model</a>
+    <div id="model-container"></div>
 
-    // Load GLB Model
-    const loader = new THREE.GLTFLoader();
-    loader.load( '3d.glb', 
-      ( gltf ) => { 
-        scene.add( gltf.scene ); 
-      },
-      // ... (Progress and Error callbacks as before) ...
-    );
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@loaders.gl/core@3.0.0/dist/umd/loaders.gl.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@loaders.gl/gltf@3.0.0/dist/umd/gltf.min.js"></script>
 
-    // ... (Animation Loop and Resize Handling as before) ...
-  </script>
+    <script>
+        // Wait for the DOM to fully load
+        document.addEventListener('DOMContentLoaded', () => {
+            const modelContainer = document.getElementById('model-container');
+            const loadModelBtn = document.getElementById('loadModelBtn');
+
+            // Set up a scene, camera, and renderer
+            let scene, camera, renderer;
+
+            const initScene = () => {
+                scene = new THREE.Scene();
+                camera = new THREE.PerspectiveCamera(75, window.innerWidth / 500, 0.1, 1000);
+                renderer = new THREE.WebGLRenderer();
+                renderer.setSize(window.innerWidth, 500);
+                modelContainer.appendChild(renderer.domElement);
+
+                const light = new THREE.AmbientLight(0x404040);  // Ambient light
+                scene.add(light);
+
+                camera.position.z = 3;
+            };
+
+            // Load the .glb model when the button is clicked
+            loadModelBtn.addEventListener('click', () => {
+                modelContainer.style.display = 'block'; // Show the model container
+                loadModelBtn.style.display = 'none'; // Hide the button
+                initScene();
+
+                const loader = new THREE.GLTFLoader();
+                loader.load('3d.glb', (gltf) => {
+                    scene.add(gltf.scene);
+                    animate();
+                });
+            });
+
+            // Animate the scene
+            const animate = () => {
+                requestAnimationFrame(animate);
+                renderer.render(scene, camera);
+            };
+        });
+    </script>
 </body>
 </html>
+
