@@ -68,10 +68,10 @@
             resizeRendererToModal();
 
             // Setup the light
-            const light = new THREE.AmbientLight(0xffffff, 1.5);  
+            const light = new THREE.AmbientLight(0xffffff, 0.5);  
             scene.add(light);
 
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
             directionalLight.position.set(5, 10, 5).normalize();
             scene.add(directionalLight);
 
@@ -82,8 +82,6 @@
                 model = gltf.scene;
                 model.scale.set(1, 1, 1);
                 scene.add(model);
-                
-                //camera.position.z = 3;
 
                      // Get the bounding box of the model to calculate the size
                      const box = new THREE.Box3().setFromObject(model);
