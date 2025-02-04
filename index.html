@@ -31,7 +31,6 @@
 
                     <div class="view-buttons">
                         <button class="btn btn-primary btn-sm" onclick="toggleView('solid')">Solid View</button>
-                        <button class="btn btn-warning btn-sm" onclick="toggleView('wireframe')">Wireframe View</button>
                     </div>
 
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -63,7 +62,7 @@
             // Setup the scene and camera
             scene = new THREE.Scene();
             camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
-            renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('threejsCanvas') });
+            renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('threejsCanvas'), antialias: true }); // Enable anti-aliasing
             renderer.setClearColor(0xeeeeee, 1);  
             resizeRendererToModal();
 
@@ -83,8 +82,8 @@
                 model.scale.set(1, 1, 1);
                 scene.add(model);
 
-                     // Get the bounding box of the model to calculate the size
-                     const box = new THREE.Box3().setFromObject(model);
+                // Get the bounding box of the model to calculate the size
+                const box = new THREE.Box3().setFromObject(model);
                 const modelSize = new THREE.Vector3();
                 box.getSize(modelSize);
 
@@ -95,7 +94,6 @@
 
                 // Adjust the camera position based on the model's size
                 camera.position.z = modelSize.length() * 1.5;
-                
 
                 // Store the original materials to be used in the solid view
                 model.traverse((child) => {
@@ -155,6 +153,9 @@
             } else {
                 camera.position.z += 0.1;  
             }
+
+            // Ensure the camera stays focused on the model during zooming
+            camera.lookAt(model.position);
         }
 
         // Toggle view modes
@@ -163,20 +164,11 @@
 
             model.traverse((child) => {
                 if (child.isMesh) {
-                    if (view === 'wireframe') {
-                        // Apply wireframe material
-                        child.material = new THREE.MeshBasicMaterial({
-                            color: 0x888888,
-                            wireframe: true
-                        });
-                    } else if (view === 'solid') {
-                        // Use the original material for solid view
-                        child.material = child.originalMaterial;
-                    } else if (view === 'surface') {
-                        // Apply flat shading for surface view
+                    if (view === 'solid') {
+                        // Apply smooth shading for solid view
                         child.material = new THREE.MeshStandardMaterial({
                             color: 0x888888,
-                            flatShading: true
+                            flatShading: false // Use smooth shading
                         });
                     }
                 }
