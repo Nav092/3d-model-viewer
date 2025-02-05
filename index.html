@@ -53,7 +53,6 @@
         let smoothRotationX = 0;
         let smoothRotationY = 0;
         let cameraDistance = 5; // Default camera distance from the model
-        let modelSize = new THREE.Vector3();
 
         function open3DModelModal() {
             var modal = new bootstrap.Modal(document.getElementById('3dModelModal'));
@@ -92,16 +91,16 @@
 
                 // Get the bounding box of the model to calculate the size
                 const box = new THREE.Box3().setFromObject(model);
-                box.getSize(modelSize);  // Save model size here
+                const modelSize = new THREE.Vector3();
+                box.getSize(modelSize);
 
                 // Center the model around the origin
                 const modelCenter = new THREE.Vector3();
                 box.getCenter(modelCenter);
                 model.position.sub(modelCenter);  // Center the model in the scene
 
-                // Calculate the initial camera distance based on the model's size
-                cameraDistance = modelSize.length() * 1.5;
-                camera.position.z = cameraDistance;
+                // Adjust the camera position based on the model's size
+                camera.position.z = modelSize.length() * 1.5;
 
                 // Store the original materials to be used in the solid view
                 model.traverse((child) => {
@@ -160,8 +159,8 @@
                 cameraDistance += zoomSpeed;
             }
 
-            // Clamp the camera distance to keep the model visible within the modal
-            cameraDistance = Math.max(modelSize.length() * 1.2, Math.min(cameraDistance, modelSize.length() * 4));
+            // Clamp the camera distance to avoid zooming too far in or out
+            cameraDistance = Math.max(2, Math.min(cameraDistance, 15));
 
             // Update the camera position based on the new distance
             camera.position.z = cameraDistance;
