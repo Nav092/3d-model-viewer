@@ -54,6 +54,7 @@
         let smoothRotationY = 0;
         let cameraDistance = 5; // Default camera distance from the model
         let modelSize = new THREE.Vector3();
+        let modelScaleFactor = 1; // Scale factor for zooming
 
         function open3DModelModal() {
             var modal = new bootstrap.Modal(document.getElementById('3dModelModal'));
@@ -153,18 +154,26 @@
 
         // Handle zoom using the mouse wheel with smooth effect
         function onMouseWheel(event) {
-            // Adjust the zoom level
+            // Adjust the zoom level using fov (Field of View) and model scale
             if (event.deltaY < 0) {
-                cameraDistance -= zoomSpeed;  // Zoom in
+                // Zoom in
+                camera.fov -= zoomSpeed * 10; // Increase this value for stronger zoom
+                modelScaleFactor += zoomSpeed;  // Zoom in (scale up)
             } else {
-                cameraDistance += zoomSpeed;  // Zoom out
+                // Zoom out
+                camera.fov += zoomSpeed * 10; // Decrease this value for zoom out
+                modelScaleFactor -= zoomSpeed;  // Zoom out (scale down)
             }
 
-            // Clamp the camera distance to keep the model visible within the modal
-            cameraDistance = Math.max(modelSize.length() * 1.2, Math.min(cameraDistance, modelSize.length() * 4));
+            // Apply a clamp to make sure the fov doesn't become too small or too large
+            camera.fov = Math.max(10, Math.min(camera.fov, 75));
 
-            // Update the camera position based on the new distance
-            camera.position.z = cameraDistance;
+            // Apply the new scale factor to the model
+            model.scale.set(modelScaleFactor, modelScaleFactor, modelScaleFactor);
+
+            // Adjust the camera position to keep the model centered
+            camera.updateProjectionMatrix();
+            camera.position.z = modelSize.length() * modelScaleFactor * 1.5;
             camera.lookAt(model.position);
         }
 
