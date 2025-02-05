@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Model- extra zoom</title>
+    <title>3D Model - Zoom Experience</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/three@0.135.0/build/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.135.0/examples/js/loaders/GLTFLoader.js"></script>
@@ -46,13 +46,14 @@
         let scene, camera, renderer;
         let isMouseDown = false;
         let previousMousePosition = { x: 0, y: 0 };
-        let zoomSpeed = 0.1;  // Smooth zoom speed
         let rotationSpeed = 0.005; // Smooth rotation speed
         let targetRotationX = 0;
         let targetRotationY = 0;
         let smoothRotationX = 0;
         let smoothRotationY = 0;
         let cameraDistance = 5;
+        let modelSize = new THREE.Vector3();
+        let modalWidth, modalHeight;
 
         function open3DModelModal() {
             var modal = new bootstrap.Modal(document.getElementById('3dModelModal'));
@@ -91,16 +92,15 @@
 
                 // Get the bounding box of the model to calculate the size
                 const box = new THREE.Box3().setFromObject(model);
-                const modelSize = new THREE.Vector3();
-                box.getSize(modelSize);
+                box.getSize(modelSize); // Get model size
 
                 // Center the model around the origin
                 const modelCenter = new THREE.Vector3();
                 box.getCenter(modelCenter);
                 model.position.sub(modelCenter);  // Center the model in the scene
 
-                // Adjust the camera position based on the model's size
-                camera.position.z = modelSize.length() * 1.5;
+                // Set initial camera position
+                setCameraPositionBasedOnModel();
 
                 // Store the original materials to be used in the solid view
                 model.traverse((child) => {
@@ -152,14 +152,16 @@
 
         // Handle zoom using the mouse wheel with smooth effect
         function onMouseWheel(event) {
+            let zoomSpeed = 0.1;
             if (event.deltaY < 0) {
                 camera.position.z -= zoomSpeed;
             } else {
                 camera.position.z += zoomSpeed;
             }
 
-            // Clamp the camera's z position to be within the zoom limits
-           // camera.position.z = Math.max(MIN_ZOOM, Math.min(camera.position.z, MAX_ZOOM));
+            // Dynamically calculate zoom limits based on model size and modal size
+            camera.position.z = Math.max(camera.position.z, modelSize.length() * 0.5); // Prevent too close zoom
+            camera.position.z = Math.min(camera.position.z, modalHeight / 2); // Prevent too far zoom
 
             // Ensure the camera stays focused on the model during zooming
             camera.lookAt(model.position);
@@ -181,6 +183,12 @@
             });
         }
 
+        // Set camera position based on model size
+        function setCameraPositionBasedOnModel() {
+            const distance = modelSize.length() * 1.5; // Based on model size
+            camera.position.z = distance;
+        }
+
         // Animate the scene
         function animate() {
             requestAnimationFrame(animate);
@@ -199,10 +207,10 @@
         // Resize the renderer to fit the modal size
         function resizeRendererToModal() {
             const modalBody = document.querySelector('.modal-body');
-            const width = modalBody.offsetWidth;
-            const height = modalBody.offsetHeight;
-            renderer.setSize(width, height);
-            camera.aspect = width / height;
+            modalWidth = modalBody.offsetWidth;
+            modalHeight = modalBody.offsetHeight;
+            renderer.setSize(modalWidth, modalHeight);
+            camera.aspect = modalWidth / modalHeight;
             camera.updateProjectionMatrix();
         }
 
