@@ -146,27 +146,15 @@
 
         // Handle mouse up or mouse leave event
         function onMouseUp() {
-            isMouseDown = false;
-        }
+          if (event.deltaY < 0) {
+                camera.position.z -= zoomSpeed;
+            } else {
+                camera.position.z += zoomSpeed;
+            }
 
-        // Handle zoom using the mouse wheel with smooth effect
-        function onMouseWheel(event) {
-       const zoomSpeed = 0.1;  // Zoom speed (you can adjust this as needed)
-    
-    // Check the direction of the scroll (wheel)
-    if (event.deltaY < 0) { // Zoom in
-        camera.position.z -= zoomSpeed;
-    } else { // Zoom out
-        camera.position.z += zoomSpeed;
+            // Ensure the camera stays focused on the model during zooming
+            camera.lookAt(model.position);
     }
-
-    // Ensure the zoom level stays within bounds (not too close or too far)
-    camera.position.z = Math.max(camera.position.z, 2);  // Minimum zoom distance (camera won't go closer than 2 units)
-    camera.position.z = Math.min(camera.position.z, 10); // Maximum zoom distance (camera won't go farther than 10 units)
-
-    // Ensure the camera always focuses on the model
-    camera.lookAt(model.position);
-        }
 
         // Toggle view modes
         function toggleView(view) {
