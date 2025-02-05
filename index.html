@@ -42,13 +42,8 @@
         let scene, camera, renderer;
         let isMouseDown = false;
         let previousMousePosition = { x: 0, y: 0 };
-        let zoomSpeed = 0.1;  // Adjust this for zoom speed
-        let rotationSpeed = 0.005;
-        let targetRotationX = 0;
-        let targetRotationY = 0;
-        let smoothRotationX = 0;
-        let smoothRotationY = 0;
-        let targetCameraPositionZ = 5;  // Start zoom distance for camera
+        let zoomSpeed = 0.1;  // Zoom speed factor
+        let targetCameraPositionZ = 5;  // Starting Z position for camera (zoom)
 
         function open3DModelModal() {
             var modal = new bootstrap.Modal(document.getElementById('3dModelModal'));
@@ -128,8 +123,9 @@
                 y: event.clientY - previousMousePosition.y
             };
 
-            targetRotationX += deltaMove.y * rotationSpeed;
-            targetRotationY += deltaMove.x * rotationSpeed;
+            // Apply rotation based on mouse movement
+            model.rotation.x += deltaMove.y * 0.005;
+            model.rotation.y += deltaMove.x * 0.005;
 
             previousMousePosition = { x: event.clientX, y: event.clientY };
         }
@@ -141,16 +137,13 @@
 
         // Handle zoom using the mouse wheel
         function onMouseWheel(event) {
-            // Zoom in and out based on mouse wheel
-            const delta = event.deltaY;
+            // Adjust the camera position for zoom (scroll up: zoom out, scroll down: zoom in)
+            targetCameraPositionZ += event.deltaY * zoomSpeed;
 
-            // Adjust the camera position for zoom (clamping to avoid extreme zooming)
-            targetCameraPositionZ += (delta < 0 ? -zoomSpeed : zoomSpeed);
-
-            // Set zoom limits
+            // Clamp the zoom (camera position) between a min and max value to prevent zooming too close or too far
             targetCameraPositionZ = Math.max(2, Math.min(targetCameraPositionZ, 10));
 
-            // Smoothly move the camera towards the target zoom position
+            // Smoothly adjust camera position for zoom effect
             camera.position.z = targetCameraPositionZ;
 
             // Keep the camera looking at the model
@@ -161,15 +154,8 @@
         function animate() {
             requestAnimationFrame(animate);
 
-            // Smoothly update the rotation
-            smoothRotationX += (targetRotationX - smoothRotationX) * 0.1;
-            smoothRotationY += (targetRotationY - smoothRotationY) * 0.1;
-
-            if (model) {
-                model.rotation.x = smoothRotationX;
-                model.rotation.y = smoothRotationY;
-                renderer.render(scene, camera);
-            }
+            // Render the scene with updated camera position and model rotation
+            renderer.render(scene, camera);
         }
 
         // Resize the renderer to fit the modal size
