@@ -100,7 +100,7 @@
                 model.position.sub(modelCenter);  // Center the model in the scene
 
                 // Adjust the camera position based on the model's size
-                camera.position.z = modelSize.length() * 1;
+                camera.position.z = modelSize.length() * 1.5;
 
                 // Store the original materials to be used in the solid view
                 model.traverse((child) => {
@@ -171,7 +171,6 @@
                     if (view === 'solid') {
                         // Apply smooth shading for solid view
                         child.material = new THREE.MeshStandardMaterial({
-                            color: 0x888888,
                             flatShading: false // Use smooth shading
                         });
                     }
