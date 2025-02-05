@@ -46,12 +46,13 @@
         let scene, camera, renderer;
         let isMouseDown = false;
         let previousMousePosition = { x: 0, y: 0 };
-        let zoomSpeed = 0.05;  // Smooth zoom speed
-        let rotationSpeed = 0.005; // Smooth rotation speed
+        let zoomSpeed = 0.05;  
+        let rotationSpeed = 0.005; 
         let targetRotationX = 0;
         let targetRotationY = 0;
         let smoothRotationX = 0;
         let smoothRotationY = 0;
+        let cameraDistance = 5;
 
         function open3DModelModal() {
             var modal = new bootstrap.Modal(document.getElementById('3dModelModal'));
@@ -82,7 +83,7 @@
 
             // Load the model using the GLTFLoader
             const loader = new THREE.GLTFLoader();
-            loader.load('https://modelviewer.dev/shared-assets/models/Astronaut.glb', (gltf) => {
+            loader.load('GP1000-A00.glb', (gltf) => {
                 console.log('Model loaded successfully.');
                 model = gltf.scene;
                 model.scale.set(1, 1, 1);
