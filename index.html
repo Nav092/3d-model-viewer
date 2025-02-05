@@ -46,13 +46,17 @@
         let scene, camera, renderer;
         let isMouseDown = false;
         let previousMousePosition = { x: 0, y: 0 };
-        let zoomSpeed = 0.05;  // Smooth zoom speed
+        let zoomSpeed = 0.1;  // Smooth zoom speed
         let rotationSpeed = 0.005; // Smooth rotation speed
         let targetRotationX = 0;
         let targetRotationY = 0;
         let smoothRotationX = 0;
         let smoothRotationY = 0;
         let cameraDistance = 5;
+        
+        // Zoom limits (camera distance)
+        const MIN_ZOOM = 2;  // Minimum zoom (camera closer)
+        const MAX_ZOOM = 15; // Maximum zoom (camera farther away)
 
         function open3DModelModal() {
             var modal = new bootstrap.Modal(document.getElementById('3dModelModal'));
@@ -157,6 +161,9 @@
             } else {
                 camera.position.z += zoomSpeed;
             }
+
+            // Clamp the camera's z position to be within the zoom limits
+            camera.position.z = Math.max(MIN_ZOOM, Math.min(camera.position.z, MAX_ZOOM));
 
             // Ensure the camera stays focused on the model during zooming
             camera.lookAt(model.position);
