@@ -52,6 +52,7 @@
         let targetRotationY = 0;
         let smoothRotationX = 0;
         let smoothRotationY = 0;
+        let cameraDistance = 5; // Default camera distance from the model
 
         function open3DModelModal() {
             var modal = new bootstrap.Modal(document.getElementById('3dModelModal'));
@@ -151,13 +152,18 @@
 
         // Handle zoom using the mouse wheel with smooth effect
         function onMouseWheel(event) {
+            // Adjust the zoom level
             if (event.deltaY < 0) {
-                camera.position.z -= zoomSpeed;
+                cameraDistance -= zoomSpeed;
             } else {
-                camera.position.z += zoomSpeed;
+                cameraDistance += zoomSpeed;
             }
 
-            // Ensure the camera stays focused on the model during zooming
+            // Clamp the camera distance to avoid zooming too far in or out
+            cameraDistance = Math.max(2, Math.min(cameraDistance, 15));
+
+            // Update the camera position based on the new distance
+            camera.position.z = cameraDistance;
             camera.lookAt(model.position);
         }
 
