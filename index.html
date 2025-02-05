@@ -46,7 +46,7 @@
         let scene, camera, renderer;
         let isMouseDown = false;
         let previousMousePosition = { x: 0, y: 0 };
-        let zoomSpeed = 0.1;  // Smooth zoom speed
+        let zoomSpeed = 0.1;  // Slightly faster zoom
         let rotationSpeed = 0.005; // Smooth rotation speed
         let targetRotationX = 0;
         let targetRotationY = 0;
@@ -154,23 +154,22 @@
 
         // Handle zoom using the mouse wheel with smooth effect
         function onMouseWheel(event) {
-            // Adjust the zoom level by scaling the model and adjusting the camera's position
+            // Adjust the scale factor based on the zoom direction
             if (event.deltaY < 0) {
-                // Zoom in (scale up)
-                modelScaleFactor += zoomSpeed;
+                modelScaleFactor += zoomSpeed;  // Zoom in (scale up)
             } else {
-                // Zoom out (scale down)
-                modelScaleFactor -= zoomSpeed;
+                modelScaleFactor -= zoomSpeed;  // Zoom out (scale down)
             }
 
-            // Ensure the scale factor stays within a reasonable range
-            modelScaleFactor = Math.max(0.1, Math.min(modelScaleFactor, 3));
+            // Ensure the model doesn't scale too much
+            modelScaleFactor = Math.max(0.5, Math.min(modelScaleFactor, 2)); // Scale range
 
             // Apply the new scale factor to the model
             model.scale.set(modelScaleFactor, modelScaleFactor, modelScaleFactor);
 
-            // Adjust the camera position to zoom in/out
-            camera.position.z = modelSize.length() * modelScaleFactor * 1.5;
+            // Adjust the camera distance to maintain the model's visibility in the modal
+            cameraDistance = modelSize.length() * modelScaleFactor * 1.5;
+            camera.position.z = cameraDistance;
             camera.lookAt(model.position);
         }
 
