@@ -24,14 +24,10 @@
                 <div class="modal-body p-0" style="position: relative; width: 100%; height: 500px;">
                     <canvas id="threejsCanvas" style="width: 100%; height: 100%;"></canvas>
                 </div>
-                <div class="modal-footer d-flex justify-content-between">
+                <div class="modal-footer">
                     <a href="GP1000-A00.glb" download="GP1000-A00.glb" class="btn btn-success btn-sm">
                         Download File
                     </a>
-
-                    <div class="view-buttons">
-                        <button class="btn btn-primary btn-sm" onclick="toggleView('solid')">Solid View</button>
-                    </div>
 
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
@@ -104,13 +100,6 @@
                 // Adjust the camera position based on the model's size
                 camera.position.z = modelSize.length() * 1.5;
 
-                // Store the original materials to be used in the solid view
-                model.traverse((child) => {
-                    if (child.isMesh) {
-                        child.originalMaterial = child.material;
-                    }
-                });
-
                 animate();
             }, undefined, (error) => {
                 console.error('Error loading model:', error);
@@ -164,23 +153,6 @@
 
             // Ensure the camera stays focused on the model during zooming
             camera.lookAt(model.position);
-        }
-
-        // Toggle view modes
-        function toggleView(view) {
-            if (!model) return;
-
-            model.traverse((child) => {
-                if (child.isMesh) {
-                    if (view === 'solid') {
-                        // Apply smooth shading for solid view
-                        child.material = new THREE.MeshStandardMaterial({
-                            color: 0x888888,
-                            flatShading: false // Use smooth shading
-                        });
-                    }
-                }
-            });
         }
 
         // Animate the scene
