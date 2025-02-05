@@ -53,10 +53,6 @@
         let smoothRotationX = 0;
         let smoothRotationY = 0;
         let cameraDistance = 5;
-        
-        // Zoom limits (camera distance)
-        const MIN_ZOOM = 5;  // Minimum zoom (camera closer)
-        const MAX_ZOOM = 10; // Maximum zoom (camera farther away)
 
         function open3DModelModal() {
             var modal = new bootstrap.Modal(document.getElementById('3dModelModal'));
@@ -163,7 +159,7 @@
             }
 
             // Clamp the camera's z position to be within the zoom limits
-            camera.position.z = Math.max(MIN_ZOOM, Math.min(camera.position.z, MAX_ZOOM));
+           // camera.position.z = Math.max(MIN_ZOOM, Math.min(camera.position.z, MAX_ZOOM));
 
             // Ensure the camera stays focused on the model during zooming
             camera.lookAt(model.position);
