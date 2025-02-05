@@ -149,42 +149,9 @@
             isMouseDown = false;
         }
 
-        // Handle zoom using the mouse wheel with smooth effect
-    function onMouseWheel(event) {
-    // Set zoom speed and bounds
-    const zoomSpeed = 0.1;
-    const minZoom = 5;  // Minimum distance camera can zoom in
-    const maxZoom = 30; // Maximum distance camera can zoom out
-    const modelSize = new THREE.Vector3();
 
-    // Calculate the model's size
-    const box = new THREE.Box3().setFromObject(model);
-    box.getSize(modelSize);
-    
-    const modelScaleFactor = modelSize.length();
 
-    // Calculate zoom limits based on the model size
-    const calculatedMinZoom = modelScaleFactor * 0.5; // Model won't go too big
-    const calculatedMaxZoom = modelScaleFactor * 5;   // Model won't be too small
-
-    // Adjust zoom limits dynamically
-    const effectiveMinZoom = Math.max(calculatedMinZoom, minZoom);
-    const effectiveMaxZoom = Math.min(calculatedMaxZoom, maxZoom);
-
-    // Zoom in or out based on the mouse wheel event
-    if (event.deltaY < 0) {
-        if (camera.position.z > effectiveMinZoom) {
-            camera.position.z -= zoomSpeed;
-        }
-    } else {
-        if (camera.position.z < effectiveMaxZoom) {
-            camera.position.z += zoomSpeed;
-        }
-    }
-
-    // Ensure the camera always looks at the model
-    camera.lookAt(model.position);
-}
+        //
 
 
     // Ensure the camera always looks at the model
