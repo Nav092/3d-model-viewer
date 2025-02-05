@@ -46,7 +46,7 @@
         let scene, camera, renderer;
         let isMouseDown = false;
         let previousMousePosition = { x: 0, y: 0 };
-        let zoomSpeed = 0.1;  // Slightly faster zoom
+        let zoomSpeed = 0.1;  // Smooth zoom speed
         let rotationSpeed = 0.005; // Smooth rotation speed
         let targetRotationX = 0;
         let targetRotationY = 0;
@@ -72,7 +72,7 @@
             scene = new THREE.Scene();
             camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
             renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('threejsCanvas'), antialias: true });
-            renderer.setClearColor(0xeeeeee, 1);
+            renderer.setClearColor(0xcccccc, 1);
             resizeRendererToModal();
 
             // Setup the light
@@ -154,25 +154,22 @@
 
         // Handle zoom using the mouse wheel with smooth effect
         function onMouseWheel(event) {
-            // Adjust the zoom level using fov (Field of View) and model scale
+            // Adjust the zoom level by scaling the model and adjusting the camera's position
             if (event.deltaY < 0) {
-                // Zoom in
-                camera.fov -= zoomSpeed * 10; // Increase this value for stronger zoom
-                modelScaleFactor += zoomSpeed;  // Zoom in (scale up)
+                // Zoom in (scale up)
+                modelScaleFactor += zoomSpeed;
             } else {
-                // Zoom out
-                camera.fov += zoomSpeed * 10; // Decrease this value for zoom out
-                modelScaleFactor -= zoomSpeed;  // Zoom out (scale down)
+                // Zoom out (scale down)
+                modelScaleFactor -= zoomSpeed;
             }
 
-            // Apply a clamp to make sure the fov doesn't become too small or too large
-            camera.fov = Math.max(10, Math.min(camera.fov, 75));
+            // Ensure the scale factor stays within a reasonable range
+            modelScaleFactor = Math.max(0.1, Math.min(modelScaleFactor, 3));
 
             // Apply the new scale factor to the model
             model.scale.set(modelScaleFactor, modelScaleFactor, modelScaleFactor);
 
-            // Adjust the camera position to keep the model centered
-            camera.updateProjectionMatrix();
+            // Adjust the camera position to zoom in/out
             camera.position.z = modelSize.length() * modelScaleFactor * 1.5;
             camera.lookAt(model.position);
         }
