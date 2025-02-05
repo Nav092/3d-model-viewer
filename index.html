@@ -146,7 +146,12 @@
 
         // Handle mouse up or mouse leave event
         function onMouseUp() {
-          if (event.deltaY < 0) {
+            isMouseDown = false;
+        }
+
+        // Handle zoom using the mouse wheel with smooth effect
+        function onMouseWheel(event) {
+            if (event.deltaY < 0) {
                 camera.position.z -= zoomSpeed;
             } else {
                 camera.position.z += zoomSpeed;
@@ -154,7 +159,7 @@
 
             // Ensure the camera stays focused on the model during zooming
             camera.lookAt(model.position);
-    }
+        }
 
         // Toggle view modes
         function toggleView(view) {
