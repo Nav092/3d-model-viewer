@@ -53,6 +53,9 @@
         let smoothRotationX = 0;
         let smoothRotationY = 0;
 
+        const MIN_ZOOM = 2;  // Minimum zoom level
+        const MAX_ZOOM = 5;  // Maximum zoom level
+
         function open3DModelModal() {
             var modal = new bootstrap.Modal(document.getElementById('3dModelModal'));
             modal.show();
