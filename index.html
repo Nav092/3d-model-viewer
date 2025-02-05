@@ -42,13 +42,13 @@
         let scene, camera, renderer;
         let isMouseDown = false;
         let previousMousePosition = { x: 0, y: 0 };
-        let zoomSpeed = 0.05;  // Smooth zoom speed
-        let rotationSpeed = 0.005; // Smooth rotation speed
+        let zoomSpeed = 0.1;  // Adjust this for zoom speed
+        let rotationSpeed = 0.005;
         let targetRotationX = 0;
         let targetRotationY = 0;
         let smoothRotationX = 0;
         let smoothRotationY = 0;
-        let targetCameraPositionZ = 5; // Target Z position for zooming
+        let targetCameraPositionZ = 5;  // Start zoom distance for camera
 
         function open3DModelModal() {
             var modal = new bootstrap.Modal(document.getElementById('3dModelModal'));
@@ -57,7 +57,7 @@
             // Wait for modal to fully show before initializing the 3D scene
             document.getElementById('3dModelModal').addEventListener('shown.bs.modal', function() {
                 initThreeJS();
-                resizeRendererToModal(); // Resize canvas to fit the modal
+                resizeRendererToModal();
             });
         }
 
@@ -93,7 +93,7 @@
                 // Center the model around the origin
                 const modelCenter = new THREE.Vector3();
                 box.getCenter(modelCenter);
-                model.position.sub(modelCenter);  // Center the model in the scene
+                model.position.sub(modelCenter);
 
                 // Adjust the camera position based on the model's size
                 camera.position.z = modelSize.length() * 1.5;
@@ -139,20 +139,21 @@
             isMouseDown = false;
         }
 
-        // Handle zoom using the mouse wheel with smooth effect
+        // Handle zoom using the mouse wheel
         function onMouseWheel(event) {
-            // Get the direction of the zoom (negative value means zooming in)
+            // Zoom in and out based on mouse wheel
             const delta = event.deltaY;
 
-            // Smooth zoom
+            // Adjust the camera position for zoom (clamping to avoid extreme zooming)
             targetCameraPositionZ += (delta < 0 ? -zoomSpeed : zoomSpeed);
 
-            // Clamp the zoom level (Optional, but adds control over zoom range)
+            // Set zoom limits
             targetCameraPositionZ = Math.max(2, Math.min(targetCameraPositionZ, 10));
 
+            // Smoothly move the camera towards the target zoom position
             camera.position.z = targetCameraPositionZ;
 
-            // Ensure the camera stays focused on the model during zooming
+            // Keep the camera looking at the model
             camera.lookAt(model.position);
         }
 
@@ -161,8 +162,8 @@
             requestAnimationFrame(animate);
 
             // Smoothly update the rotation
-            smoothRotationX += (targetRotationX - smoothRotationX) * 0.1; // Smooth transition
-            smoothRotationY += (targetRotationY - smoothRotationY) * 0.1; // Smooth transition
+            smoothRotationX += (targetRotationX - smoothRotationX) * 0.1;
+            smoothRotationY += (targetRotationY - smoothRotationY) * 0.1;
 
             if (model) {
                 model.rotation.x = smoothRotationX;
