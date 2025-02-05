@@ -48,7 +48,8 @@
         let targetRotationY = 0;
         let smoothRotationX = 0;
         let smoothRotationY = 0;
-   
+        let targetCameraPositionZ = 5; // Target Z position for zooming
+
         function open3DModelModal() {
             var modal = new bootstrap.Modal(document.getElementById('3dModelModal'));
             modal.show();
@@ -140,11 +141,14 @@
 
         // Handle zoom using the mouse wheel with smooth effect
         function onMouseWheel(event) {
+            // Get the direction of the zoom (negative value means zooming in)
             const delta = event.deltaY;
+
+            // Smooth zoom
             targetCameraPositionZ += (delta < 0 ? -zoomSpeed : zoomSpeed);
 
-            // Clamp the zoom level
-            targetCameraPositionZ = Math.max(minZoom, Math.min(targetCameraPositionZ, maxZoom));
+            // Clamp the zoom level (Optional, but adds control over zoom range)
+            targetCameraPositionZ = Math.max(2, Math.min(targetCameraPositionZ, 10));
 
             camera.position.z = targetCameraPositionZ;
 
