@@ -1,6 +1,6 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.135.0/build/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.135.0/examples/js/loaders/GLTFLoader.js"></script>
 </head>
+
 <body>
     <a href="#" id="view-3d-model" onclick="open3DModelModal(); return false;">
         <strong>View 3D Model</strong>
@@ -26,7 +27,7 @@
                     <canvas id="threejsCanvas" style="width: 100%; height: 100%;"></canvas>
                 </div>
                 <div class="modal-footer d-flex justify-content-between">
-                    <a href="GP1000-A00.glb" download="GP1000-A00.glb" class="btn btn-success btn-sm">
+                    <a href="GP1500-A01CC.MQY.glb" download=GP1500-A01CC.MQY.glb" class="btn btn-success btn-sm">
                         Download File
                     </a>
 
@@ -61,7 +62,7 @@
             var modal = new bootstrap.Modal(document.getElementById('3dModelModal'));
             modal.show();
 
-            document.getElementById('3dModelModal').addEventListener('shown.bs.modal', function() {
+            document.getElementById('3dModelModal').addEventListener('shown.bs.modal', function () {
                 initThreeJS();
                 resizeRendererToModal(); 
             });
@@ -73,7 +74,7 @@
             renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('threejsCanvas'), antialias: true });
             renderer.setClearColor(0xeeeeee, 1);
             resizeRendererToModal();
-            
+
             const light = new THREE.AmbientLight(0xffffff, 0.5);
             scene.add(light);
 
@@ -95,7 +96,7 @@
 
                 const modelCenter = new THREE.Vector3();
                 box.getCenter(modelCenter);
-                model.position.sub(modelCenter);  
+                model.position.sub(modelCenter); 
 
                 camera.position.z = modelSize.length() * 1.5;
 
@@ -104,6 +105,7 @@
                         child.originalMaterial = child.material; 
                     }
                 });
+
                 animate();
             }, undefined, (error) => {
                 console.error('Error loading model:', error);
@@ -140,17 +142,26 @@
             isMouseDown = false;
         }
 
+        // Handle zoom using the mouse wheel with smooth effect
+        let minZoom = 2; 
+        let maxZoom = 10; 
+
         function onMouseWheel(event) {
+            event.preventDefault();
+
             if (event.deltaY < 0) {
                 camera.position.z -= zoomSpeed;
             } else {
                 camera.position.z += zoomSpeed;
             }
 
-            // Ensure the camera stays focused on the model during zooming
-            camera.lookAt(model.position);
+            camera.position.z = Math.max(minZoom, Math.min(maxZoom, camera.position.z));
+
+            //camera.lookAt(model.position);
         }
 
+
+        // Toggle between solid view and original material
         function toggleView() {
             if (!model) return;
 
@@ -159,23 +170,25 @@
             model.traverse((child) => {
                 if (child.isMesh) {
                     if (isSolidView) {
+                        // Apply solid view material
                         child.material = new THREE.MeshStandardMaterial({
                             color: 0x888888,
-                            flatShading: false 
+                            flatShading: false
                         });
                     } else {
-                       
                         child.material = child.originalMaterial;
                     }
                 }
             });
         }
 
+        // Animate the scene
         function animate() {
             requestAnimationFrame(animate);
 
-            smoothRotationX += (targetRotationX - smoothRotationX) * 0.1; // Smooth transition
-            smoothRotationY += (targetRotationY - smoothRotationY) * 0.1; // Smooth transition
+            smoothRotationX += (targetRotationX - smoothRotationX) * 0.1; 
+            smoothRotationY += (targetRotationY - smoothRotationY) * 0.1; 
+
             if (model) {
                 model.rotation.x = smoothRotationX;
                 model.rotation.y = smoothRotationY;
@@ -183,6 +196,7 @@
             }
         }
 
+        // Resize the renderer to fit the modal size
         function resizeRendererToModal() {
             const modalBody = document.querySelector('.modal-body');
             const width = modalBody.offsetWidth;
@@ -192,9 +206,11 @@
             camera.updateProjectionMatrix();
         }
 
+        // Handle window resizing
         window.addEventListener('resize', () => {
             resizeRendererToModal();
         });
     </script>
 </body>
+
 </html>
