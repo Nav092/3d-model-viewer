@@ -84,7 +84,7 @@
 
             // Load the model using the GLTFLoader
             const loader = new THREE.GLTFLoader();
-            loader.load('https://modelviewer.dev/shared-assets/models/Astronaut.glb', (gltf) => {
+            loader.load('https://powervoltgroup.com/frontend/assets/images/models/3d.glb', (gltf) => {
                 console.log('Model loaded successfully.');
                 model = gltf.scene;
                 model.scale.set(1, 1, 1);
@@ -144,7 +144,7 @@
 
         // Handle zoom using the mouse wheel with smooth effect
         let minZoom = 2; 
-        let maxZoom = 8; 
+        let maxZoom = 9; 
 
         function onMouseWheel(event) {
             event.preventDefault();
