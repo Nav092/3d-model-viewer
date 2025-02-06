@@ -27,7 +27,7 @@
                     <canvas id="threejsCanvas" style="width: 100%; height: 100%;"></canvas>
                 </div>
                 <div class="modal-footer d-flex justify-content-between">
-                    <a href="GP1500-A01CC.MQY.glb" download=GP1500-A01CC.MQY.glb" class="btn btn-success btn-sm">
+                    <a href="#" download=GP1500-A01CC.MQY.glb" class="btn btn-success btn-sm">
                         Download File
                     </a>
 
@@ -84,7 +84,7 @@
 
             // Load the model using the GLTFLoader
             const loader = new THREE.GLTFLoader();
-            loader.load('https://powervoltgroup.com/frontend/assets/images/models/3d.glb', (gltf) => {
+            loader.load('https://modelviewer.dev/shared-assets/models/Astronaut.glb', (gltf) => {
                 console.log('Model loaded successfully.');
                 model = gltf.scene;
                 model.scale.set(1, 1, 1);
