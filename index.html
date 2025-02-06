@@ -84,7 +84,7 @@
 
             // Load the model using the GLTFLoader
             const loader = new THREE.GLTFLoader();
-            loader.load('GP1500-A01CC.MQY.glb', (gltf) => {
+            loader.load('https://modelviewer.dev/shared-assets/models/Astronaut.glb', (gltf) => {
                 console.log('Model loaded successfully.');
                 model = gltf.scene;
                 model.scale.set(1, 1, 1);
