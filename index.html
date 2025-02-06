@@ -47,36 +47,33 @@
         let scene, camera, renderer;
         let isMouseDown = false;
         let previousMousePosition = { x: 0, y: 0 };
-        let zoomSpeed = 0.05;  // Smooth zoom speed
-        let rotationSpeed = 0.005; // Smooth rotation speed
+        let zoomSpeed = 0.05;  
+        let rotationSpeed = 0.005; 
         let targetRotationX = 0;
         let targetRotationY = 0;
         let smoothRotationX = 0;
         let smoothRotationY = 0;
 
-        let isSolidView = false; // Flag to toggle between solid view and original view
+        let isSolidView = false; 
         let originalMaterial = null;
 
         function open3DModelModal() {
             var modal = new bootstrap.Modal(document.getElementById('3dModelModal'));
             modal.show();
 
-            // Wait for modal to fully show before initializing the 3D scene
             document.getElementById('3dModelModal').addEventListener('shown.bs.modal', function() {
                 initThreeJS();
-                resizeRendererToModal(); // Resize canvas to fit the modal
+                resizeRendererToModal(); 
             });
         }
 
         function initThreeJS() {
-            // Setup the scene and camera
             scene = new THREE.Scene();
             camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
             renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('threejsCanvas'), antialias: true });
             renderer.setClearColor(0xeeeeee, 1);
             resizeRendererToModal();
-
-            // Setup the light
+            
             const light = new THREE.AmbientLight(0xffffff, 0.5);
             scene.add(light);
 
@@ -86,54 +83,45 @@
 
             // Load the model using the GLTFLoader
             const loader = new THREE.GLTFLoader();
-            loader.load('https://modelviewer.dev/shared-assets/models/Astronaut.glb', (gltf) => {
+            loader.load('GP1500-A01CC.MQY.glb', (gltf) => {
                 console.log('Model loaded successfully.');
                 model = gltf.scene;
                 model.scale.set(1, 1, 1);
                 scene.add(model);
 
-                // Get the bounding box of the model to calculate the size
                 const box = new THREE.Box3().setFromObject(model);
                 const modelSize = new THREE.Vector3();
                 box.getSize(modelSize);
 
-                // Center the model around the origin
                 const modelCenter = new THREE.Vector3();
                 box.getCenter(modelCenter);
-                model.position.sub(modelCenter);  // Center the model in the scene
+                model.position.sub(modelCenter);  
 
-                // Adjust the camera position based on the model's size
                 camera.position.z = modelSize.length() * 1.5;
 
-                // Store the original materials to be used in the solid view
                 model.traverse((child) => {
                     if (child.isMesh) {
-                        child.originalMaterial = child.material; // Store original material
+                        child.originalMaterial = child.material; 
                     }
                 });
-
                 animate();
             }, undefined, (error) => {
                 console.error('Error loading model:', error);
             });
 
-            // Listen for mouse wheel to zoom
             document.getElementById('threejsCanvas').addEventListener('wheel', onMouseWheel, false);
 
-            // Mouse event listeners for manual rotation
             document.getElementById('threejsCanvas').addEventListener('mousedown', onMouseDown, false);
             document.getElementById('threejsCanvas').addEventListener('mousemove', onMouseMove, false);
             document.getElementById('threejsCanvas').addEventListener('mouseup', onMouseUp, false);
             document.getElementById('threejsCanvas').addEventListener('mouseleave', onMouseUp, false);
         }
 
-        // Handle mouse down event for manual rotation
         function onMouseDown(event) {
             isMouseDown = true;
             previousMousePosition = { x: event.clientX, y: event.clientY };
         }
 
-        // Handle mouse move event for manual rotation
         function onMouseMove(event) {
             if (!isMouseDown) return;
 
@@ -148,12 +136,10 @@
             previousMousePosition = { x: event.clientX, y: event.clientY };
         }
 
-        // Handle mouse up or mouse leave event
         function onMouseUp() {
             isMouseDown = false;
         }
 
-        // Handle zoom using the mouse wheel with smooth effect
         function onMouseWheel(event) {
             if (event.deltaY < 0) {
                 camera.position.z -= zoomSpeed;
@@ -165,36 +151,31 @@
             camera.lookAt(model.position);
         }
 
-        // Toggle between solid view and original material
         function toggleView() {
             if (!model) return;
 
-            isSolidView = !isSolidView; // Toggle the view flag
+            isSolidView = !isSolidView; 
 
             model.traverse((child) => {
                 if (child.isMesh) {
                     if (isSolidView) {
-                        // Apply solid view material
                         child.material = new THREE.MeshStandardMaterial({
                             color: 0x888888,
-                            flatShading: false // Use smooth shading
+                            flatShading: false 
                         });
                     } else {
-                        // Revert back to original material
+                       
                         child.material = child.originalMaterial;
                     }
                 }
             });
         }
 
-        // Animate the scene
         function animate() {
             requestAnimationFrame(animate);
 
-            // Smoothly update the rotation
             smoothRotationX += (targetRotationX - smoothRotationX) * 0.1; // Smooth transition
             smoothRotationY += (targetRotationY - smoothRotationY) * 0.1; // Smooth transition
-
             if (model) {
                 model.rotation.x = smoothRotationX;
                 model.rotation.y = smoothRotationY;
@@ -202,7 +183,6 @@
             }
         }
 
-        // Resize the renderer to fit the modal size
         function resizeRendererToModal() {
             const modalBody = document.querySelector('.modal-body');
             const width = modalBody.offsetWidth;
@@ -212,7 +192,6 @@
             camera.updateProjectionMatrix();
         }
 
-        // Handle window resizing
         window.addEventListener('resize', () => {
             resizeRendererToModal();
         });
