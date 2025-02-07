@@ -144,7 +144,7 @@
 
         // Handle zoom using the mouse wheel with smooth effect
         let minZoom = 2; 
-        let maxZoom = 8; 
+        let maxZoom = 7; 
 
         function onMouseWheel(event) {
             event.preventDefault();
@@ -198,7 +198,7 @@
 
         // Resize the renderer to fit the modal size
         function resizeRendererToModal() {
-            const modalBody = document.querySelector('.modal-body');
+            const modalBody = document.querySelector('.modal-body.p-0');
             const width = modalBody.offsetWidth;
             const height = modalBody.offsetHeight;
             renderer.setSize(width, height);
