@@ -8,12 +8,38 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/three@0.135.0/build/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.135.0/examples/js/loaders/GLTFLoader.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-size: 12px;
+            overflow: hidden;
+        }
+
+        .view-3d {
+            background-color: #00e1ff;
+            color: #000;
+            font-size: 15px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 
 <body>
-    <a href="#" id="view-3d-model" onclick="open3DModelModal(); return false;">
-        <strong>View 3D Model</strong>
-    </a>
+    <div class="view-3d">
+        <a href="#" id="view-3d-model" onclick="open3DModelModal(); return false;">
+            <strong>View 3D Model</strong>
+        </a>
+    </div>
 
     <!-- Modal for 3D model -->
     <div class="modal fade" id="3dModelModal" tabindex="-1" aria-labelledby="3dModelModalLabel" aria-hidden="true">
@@ -27,7 +53,7 @@
                     <canvas id="threejsCanvas" style="width: 100%; height: 100%;"></canvas>
                 </div>
                 <div class="modal-footer d-flex justify-content-between">
-                    <a href="#" download=GP1500-A01CC.MQY.glb" class="btn btn-success btn-sm">
+                    <a href="GP1000-A00.glb" download="GP1000-A00.glb" class="btn btn-success btn-sm">
                         Download File
                     </a>
 
@@ -48,7 +74,7 @@
         let scene, camera, renderer;
         let isMouseDown = false;
         let previousMousePosition = { x: 0, y: 0 };
-        let zoomSpeed = 0.01;  
+        let zoomSpeed = 0.05;  
         let rotationSpeed = 0.005; 
         let targetRotationX = 0;
         let targetRotationY = 0;
@@ -62,17 +88,30 @@
             var modal = new bootstrap.Modal(document.getElementById('3dModelModal'));
             modal.show();
 
-            document.getElementById('3dModelModal').addEventListener('shown.bs.modal', function () {
-                initThreeJS();
-                resizeRendererToModal(); 
-            });
+            // Clear the previous scene and initialize everything again
+            clearScene();
+            initThreeJS();
+        }
+
+        // Function to clear the previous scene
+        function clearScene() {
+            if (model) {
+                scene.remove(model);
+                model.traverse((child) => {
+                    if (child.isMesh) {
+                        child.material.dispose();
+                        child.geometry.dispose();
+                    }
+                });
+                model = null;
+            }
         }
 
         function initThreeJS() {
             scene = new THREE.Scene();
             camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
             renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('threejsCanvas'), antialias: true });
-            renderer.setClearColor(0xfcfcfc, 1);
+            renderer.setClearColor(0xeeeeee, 1);
             resizeRendererToModal();
 
             const light = new THREE.AmbientLight(0xffffff, 0.5);
@@ -143,21 +182,15 @@
         }
 
         // Handle zoom using the mouse wheel with smooth effect
+        function onMouseWheel(event) {
+            event.preventDefault();
 
-
-function onMouseWheel(event) {
-    event.preventDefault();
-
-    if (event.deltaY < 0) {
-        // Zoom in (move the camera closer)
-        camera.position.z -= zoomSpeed;
-    } else {
-        // Zoom out (move the camera farther away)
-        camera.position.z += zoomSpeed;
-    }
-}
-
-
+            if (event.deltaY < 0) {
+                camera.position.z -= zoomSpeed;
+            } else {
+                camera.position.z += zoomSpeed;
+            }
+        }
 
         // Toggle between solid view and original material
         function toggleView() {
@@ -196,7 +229,7 @@ function onMouseWheel(event) {
 
         // Resize the renderer to fit the modal size
         function resizeRendererToModal() {
-            const modalBody = document.querySelector('.modal-body.p-0');
+            const modalBody = document.querySelector('.modal-body.p-0')
             const width = modalBody.offsetWidth;
             const height = modalBody.offsetHeight;
             renderer.setSize(width, height);
