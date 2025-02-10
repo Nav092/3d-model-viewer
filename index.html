@@ -143,22 +143,20 @@
         }
 
         // Handle zoom using the mouse wheel with smooth effect
-        let minZoom = 2; 
-        let maxZoom = 7; 
+       let zoomSpeed = 0.1;
 
-        function onMouseWheel(event) {
-            event.preventDefault();
+function onMouseWheel(event) {
+    event.preventDefault();
 
-            if (event.deltaY < 0) {
-                camera.position.z -= zoomSpeed;
-            } else {
-                camera.position.z += zoomSpeed;
-            }
+    if (event.deltaY < 0) {
+        // Zoom in (move the camera closer)
+        camera.position.z -= zoomSpeed;
+    } else {
+        // Zoom out (move the camera farther away)
+        camera.position.z += zoomSpeed;
+    }
+}
 
-            camera.position.z = Math.max(minZoom, Math.min(maxZoom, camera.position.z));
-
-            //camera.lookAt(model.position);
-        }
 
 
         // Toggle between solid view and original material
